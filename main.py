@@ -5,7 +5,7 @@ import pygame
 from render import Renderer
 from timer import PygameTimer, Timer
 from world_map import HelpSignManager, WorldMap
-from constants import GameState, tutorial_descriptions
+from constants import GameState, tutorial_descriptions, level_descriptions
 
 pygame.init()
 
@@ -43,7 +43,7 @@ def load_level(level):
 		help_manager.descriptions = tutorial_descriptions
 		powerup_manager.add_tutorial_powerups()
 	else:
-		help_manager.descriptions = []
+		help_manager.descriptions = level_descriptions
 		powerup_manager.add_level_powerups()
 
 def level_start():
@@ -56,6 +56,8 @@ def level_start():
 	level_music_player.play(-1)
 
 def render_game():
+	global world_map
+
 	# render background
 	renderer.render_background()
 
@@ -103,6 +105,8 @@ def game_loop():
 				player.dash()
 			elif event.key == pygame.K_z:
 				player.teleport()
+			elif event.key == pygame.K_r:
+				player.reset()
 			elif event.key == pygame.K_SPACE:
 				player.won = True
 			
@@ -170,6 +174,9 @@ def pause_loop():
 
 def main_menu_loop():
 	global game_state
+	game_state = GameState.GAME
+	load_level("level_data.csv")
+	level_start()
 
 	if not main_menu_music_player.is_playing():
 		main_menu_music_player.reset()

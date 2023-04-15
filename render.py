@@ -104,8 +104,8 @@ class Renderer():
 
     def move_right(self, amount):
         self.shift -= amount
-        # if self.shift > 0:
-        #     self.shift = 0
+        if self.shift < -TILE_SIZE * COLS + SCREEN_WIDTH:
+            self.shift = -TILE_SIZE * COLS + SCREEN_WIDTH
 
     def reset(self):
         self.shift = 0

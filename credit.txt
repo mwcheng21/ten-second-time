@@ -1,0 +1,6 @@
+Third party assets used are from the following sources, and are used under the Creative Commons Attribution 3.0 license (all public domain):
+Background music from Ross Bugden
+Whoosh Sound Effect by Jofae
+Various Sprites by kenney assets
+
+All other assets are created by me, and follow the same license in this project.

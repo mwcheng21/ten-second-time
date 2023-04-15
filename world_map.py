@@ -13,7 +13,7 @@ class WorldMap:
         self.help_list = []
         self.help_list_tiles = []
         img_list = []
-        self.num_tiles = 32
+        self.num_tiles = 33
         for x in range(self.num_tiles+1):
             img = pygame.image.load(f'assets/tiles/tile{x}.png')
             img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
@@ -46,7 +46,7 @@ class WorldMap:
                             # door tile
                             self.win_list.append(tile_data)
                             self.tiles.append(tile_data)
-                        elif (tile == 8 or tile == 9):
+                        elif (tile == 8 or tile == 9 or tile == 33):
                             #danger tiles
                             self.tiles.append(tile_data)
                             self.death_list.append(tile_data)
