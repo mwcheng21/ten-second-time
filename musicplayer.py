@@ -21,7 +21,7 @@ class MusicPlayer():
 
     @staticmethod
     def play_switch():
-        pygame.mixer.Sound("assets/audio/land.ogg").play()
+        pygame.mixer.Sound("assets/audio/select_001.ogg").play()
 
     @staticmethod
     def play_dash():

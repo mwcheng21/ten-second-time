@@ -29,8 +29,8 @@ freezeTick = 50
 help_manager = HelpSignManager()
 main_menu_music_player = MusicPlayer("assets/audio/silver_seven_step.wav")
 level_music_player = MusicPlayer("assets/audio/bedtime.wav")
-pause_music_player = MusicPlayer("assets/audio/dawn.wav")
-win_music_player = MusicPlayer("assets/audio/Olympus.wav")
+pause_music_player = MusicPlayer("assets/audio/Olympus.wav")
+win_music_player = MusicPlayer("assets/audio/dawn.wav")
 musicPlayers = [main_menu_music_player, level_music_player, pause_music_player]
 
 def load_level(level):
@@ -174,9 +174,6 @@ def pause_loop():
 
 def main_menu_loop():
 	global game_state
-	game_state = GameState.GAME
-	load_level("level_data.csv")
-	level_start()
 
 	if not main_menu_music_player.is_playing():
 		main_menu_music_player.reset()
