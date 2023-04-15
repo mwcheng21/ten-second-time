@@ -16,13 +16,16 @@ class Renderer():
         self.current_shift = 0
         self.counter = 0
 
-    def render_image(self, image, x, y, width=None, height=None, flipped=False):
+    def render_image(self, image, x, y, width=None, height=None, flipped=False, shift=True):
         image = pygame.image.load(image)
         if not (width is None and height is None):
             image = pygame.transform.scale(image, (width, height))
         rect = image.get_rect()
 
-        rect = rect.move((x + self.current_shift, y))
+        if shift:
+            rect = rect.move((x + self.current_shift, y))
+        else:
+            rect = rect.move((x, y))
         image = pygame.transform.flip(image, True, False) if flipped else image
         self.screen.blit(image, rect)
         return image, rect
@@ -37,10 +40,25 @@ class Renderer():
             self.render_image(f"assets/background/{image}.png", x, 0, width, SCREEN_HEIGHT)
             x += width
 
-    def render_world(self, world_map):
+    def render_world(self, world_map, player, help_manager):
         for tile in world_map.tiles:
             coords = tile[1]
             self.screen.blit(tile[0], (coords.x + self.current_shift, coords.y))
+
+        if player.help_index != -1:
+            # render help text in top right
+            font = pygame.font.SysFont("Segoe UI Black", 22)
+            black = (0, 0, 0)
+            for i, helpSign in enumerate(world_map.help_list):
+                if helpSign.idx == player.help_index:
+                    pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(SCREEN_WIDTH/2 - 200, 20, 400, 150))
+                    sign_description = help_manager.descriptions[i]
+                    lines = sign_description.split("\n")
+                    for i, line in enumerate(lines):
+                        self.render_text(line, SCREEN_WIDTH/2, 50 + i * 30, font, black, centered=True)
+                    break
+
+        
 
     def render_player(self, player: Player, cur_starting_x: int = 0):
         assert self.current_shift <= 0
@@ -98,8 +116,8 @@ class Renderer():
 
     def render_main_menu(self):
         self.screen.fill((0,0,0))
-        self.render_image("assets/background/set3_background.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.render_image("assets/background/set3_hills.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.render_image("assets/background/set3_background.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
+        self.render_image("assets/background/set3_hills.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
 
         # Render logo at center of screen
         pygame.logo = pygame.image.load("assets/logo.png")
@@ -110,9 +128,9 @@ class Renderer():
         # Render start, settings, and quit buttons (size 190 by 49)
         button_width = 190
         button_height = 49
-        _, tutorial_button = self.render_image("assets/buttons/tutorial_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height)
-        _, start_button = self.render_image("assets/buttons/start_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + button_height + 10)
-        _, quit_button = self.render_image("assets/buttons/quit_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + 2 * (button_height + 10))
+        _, tutorial_button = self.render_image("assets/buttons/tutorial_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height, shift=False)
+        _, start_button = self.render_image("assets/buttons/start_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + button_height + 10, shift=False)
+        _, quit_button = self.render_image("assets/buttons/quit_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + 2 * (button_height + 10), shift=False)
 
         return start_button, tutorial_button, quit_button
     
@@ -127,17 +145,15 @@ class Renderer():
     def render_stats(self, level_time, total_time, player):
         font = pygame.font.SysFont("Segoe UI Black", 30)
         black = (0,0,0)
+
         # Render background
-        self.render_image("assets/background/set3_background.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.render_image("assets/background/set3_tiles.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.render_image("assets/background/set3_background.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
+        self.render_image("assets/background/set3_tiles.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
 
         # Render logo at center of screen
         multiplyer = 0.6
-        self.render_image("assets/logo.png", 50, 0, 550*multiplyer, 310*multiplyer)
+        self.render_image("assets/logo.png", 50, 0, 550*multiplyer, 310*multiplyer, shift=False)
         self.render_text(Timer.time_to_str(level_time), 550*multiplyer + 50, 25, pygame.font.SysFont("Segoe UI Black", 100), (52, 201, 59))
-        times_completed = player.completions + 1
-
-
 
         col1x = SCREEN_WIDTH/2 - 250
         col2x = SCREEN_WIDTH/2 + 100
@@ -154,7 +170,7 @@ class Renderer():
 
         # Render times completed
         self.render_text("Completions:", col1x, SCREEN_HEIGHT/2 - 50, font, black)
-        self.render_text(str(times_completed), col2x, SCREEN_HEIGHT/2 - 50, font, black)
+        self.render_text(str(player.completions), col2x, SCREEN_HEIGHT/2 - 50, font, black)
 
         # Render deaths
         self.render_text("Deaths:", col1x, SCREEN_HEIGHT/2, font, black)
@@ -162,17 +178,17 @@ class Renderer():
         
         # render if teleporter is on
         self.render_text("Teleport On:", col1x, SCREEN_HEIGHT/2 + 50, font, black)
-        self.render_image(true_button if player.canTeleport else false_button, col2x, SCREEN_HEIGHT/2 + 50, 20, 20)
+        self.render_image(true_button if player.canTeleport else false_button, col2x, SCREEN_HEIGHT/2 + 50, 20, 20, shift=False)
         
         # render if double jump is on
         self.render_text("Double Jump On:", col1x, SCREEN_HEIGHT / 2 + 100, font, black)
-        self.render_image(true_button if player.canDoubleJump else false_button, col2x, SCREEN_HEIGHT/2 + 100, 20, 20)
+        self.render_image(true_button if player.canDoubleJump else false_button, col2x, SCREEN_HEIGHT/2 + 100, 20, 20, shift=False)
 
         # render if can dash
         self.render_text("Dash On:", col1x, SCREEN_HEIGHT / 2 + 150, font, black)
-        self.render_image(true_button if player.canDash else false_button, col2x, SCREEN_HEIGHT/2 + 150, 20, 20)
+        self.render_image(true_button if player.canDash else false_button, col2x, SCREEN_HEIGHT/2 + 150, 20, 20, shift=False)
 
         # Render continue button
-        _, continue_button = self.render_image("assets/buttons/continue_button.png", SCREEN_WIDTH/2 - 190/2, SCREEN_HEIGHT/2 + 200)
+        _, continue_button = self.render_image("assets/buttons/continue_button.png", SCREEN_WIDTH/2 - 190/2, SCREEN_HEIGHT/2 + 200, shift=False)
 
         return continue_button

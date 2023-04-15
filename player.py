@@ -13,6 +13,7 @@ class Player:
         self.y = STARTING_Y * TILE_SIZE
         self.width = 45*0.6#45*0.6
         self.height = 45*0.6#54*0.6
+        self.help_index = -1
 
         #movement variables
         self.horizontal_v = 0
@@ -183,3 +184,11 @@ class Player:
                     self.deaths += 1
                     self.reset()
                     
+        # Check if player colliding with help sign
+        for i, tile in enumerate(self.world_map.help_list_tiles):
+            _, rect = tile
+            if rect.colliderect(self.x, self.y, self.width, self.height):
+                self.help_index = i
+                break
+            else:
+                self.help_index = -1

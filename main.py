@@ -1,12 +1,11 @@
-from constants import GameState
 from musicplayer import MusicPlayer
 from player import Player
 from powerups.powerup_manager import PowerUpManager
 import pygame
 from render import Renderer
 from timer import PygameTimer, Timer
-from world_map import WorldMap
-
+from world_map import HelpSignManager, WorldMap
+from constants import GameState, tutorial_descriptions
 
 pygame.init()
 
@@ -27,6 +26,7 @@ running = True
 game_state = GameState.MAIN_MENU
 freezeTick = 50
 
+help_manager = HelpSignManager()
 main_menu_music_player = MusicPlayer("assets/audio/silver_seven_step.wav")
 level_music_player = MusicPlayer("assets/audio/bedtime.wav")
 pause_music_player = MusicPlayer("assets/audio/dawn.wav")
@@ -38,6 +38,13 @@ def load_level(level):
 	world_map = WorldMap(level)
 	player = Player(world_map)
 	powerup_manager = PowerUpManager(screen, player, level_timer)
+
+	if level == "tutorial_data.csv":
+		help_manager.descriptions = tutorial_descriptions
+		powerup_manager.add_tutorial_powerups()
+	else:
+		help_manager.descriptions = []
+		powerup_manager.add_level_powerups()
 
 def level_start():
 	global game_state, player, level_timer, powerup_manager
@@ -53,7 +60,7 @@ def render_game():
 	renderer.render_background()
 
 	# render world
-	renderer.render_world(world_map)
+	renderer.render_world(world_map, player, help_manager)
 
 	# render player
 	renderer.render_player(player)
@@ -183,7 +190,7 @@ def main_menu_loop():
 				load_level("level_data.csv")
 				level_start()
 			elif tutorial_button.collidepoint(pos):
-				game_state = GameState.TUTORIAL
+				game_state = GameState.GAME
 				load_level("tutorial_data.csv")
 				level_start()
 			elif quit_button.collidepoint(pos):
@@ -205,12 +212,6 @@ def settings_loop():
 	# back button
 	# credits?
 
-	pass
-
-def tutorial_loop():
-	global game_state
-	game_loop()
-	#event loop
 	pass
 
 def win_loop():
@@ -242,8 +243,6 @@ while running:
 		win_loop()
 	elif (game_state == GameState.SETTINGS):
 		settings_loop()
-	elif (game_state == GameState.TUTORIAL):
-		tutorial_loop()
 
 	renderer.update()
 	pygame.display.update()

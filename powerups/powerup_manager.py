@@ -16,6 +16,15 @@ class PowerUpManager():
         self.player = player
         self.level_timer = timer
 
+    def add_tutorial_powerups(self):
+        self.add_powerup(JumpPowerup("assets/powerups/jump.png", 3))
+        self.add_powerup(DoubleJumpPowerup("assets/powerups/doubleJump.png"))
+        self.add_powerup(TeleportPowerup("assets/powerups/teleport.png"))
+        self.add_powerup(TimeSlow("assets/powerups/timeslow.png", 0.75))
+
+        self.options = self.get_options()
+
+    def add_level_powerups(self):
         self.add_powerup(JumpPowerup("assets/powerups/jump.png", 3))
         self.add_powerup(IncreaseAcceleration("assets/powerups/accel.png", 5))
         self.add_powerup(IncreaseMaxSpeed("assets/powerups/speed.png", 10))
@@ -34,8 +43,8 @@ class PowerUpManager():
     def infinitely_generate_powerups(self):
         self.add_powerup(JumpPowerup("assets/powerups/jump.png", 3))
         self.add_powerup(IncreaseAcceleration("assets/powerups/accel.png", 5))
-        self.add_powerup(IncreaseMaxSpeed("assets/powerups/health.png", 10))
-        self.add_powerup(TimeSlow("assets/powerups/health.timeslow", 0.75))
+        self.add_powerup(IncreaseMaxSpeed("assets/powerups/speed.png", 10))
+        self.add_powerup(TimeSlow("assets/powerups/timeslow.png", 0.75))
         self.add_powerup(TimeStartsAt("assets/powerups/time.png", 5))
 
     def get_options(self):
