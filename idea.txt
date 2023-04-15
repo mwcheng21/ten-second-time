@@ -1,0 +1,17 @@
+A game that you try to speed run a single procedurally generated level. The level is a 2d platformer with some coins and enemies. When you beat the level, you can select a powerup to use in the next run. Then, time rewinds, and you play the level again, but with the new powerup. You win when you beat the level in under 10 seconds.
+
+
+# level design
+# Tutorial
+# fix dashing
+
+
+# testing/balance
+# graphics
+
+# thing to collect (fruit?)
+# sandbox mode
+
+
+# SATURDAY
+# video
