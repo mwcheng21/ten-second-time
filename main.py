@@ -111,6 +111,8 @@ def game_loop():
 				player.reset()
 			elif event.key == pygame.K_SPACE:
 				pass
+			elif event.key == pygame.K_ESCAPE:
+				pygame.quit()
 			
 	player.update()
 	if (player.won):
@@ -145,6 +147,8 @@ def shop_loop():
 				level_start()
 				player.reset()
 				renderer.reset()
+			elif event.key == pygame.K_ESCAPE:
+				pygame.quit()
 
 	# Render background
 	render_game()
