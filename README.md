@@ -3,7 +3,7 @@
 Devpost here:
 https://devpost.com/software/a-ten-second-time
 
-<iframe frameborder="0" src="https://itch.io/embed/2019312" width="552" height="167"><a href="https://sunlii.itch.io/ten-second-time">Ten Second Time by sunlii</a></iframe>
+itch.io: https://sunlii.itch.io/ten-second-time
 
 ## About
 Welcome to Ten Second Time, a game that combines the elements of Roguelike, platformer, and speed running. This game is designed to be easy enough for anyone to complete, but challenging enough for even the most skilled players to enjoy.
