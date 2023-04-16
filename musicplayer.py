@@ -1,5 +1,7 @@
 import pygame
 
+from utils import resource_path
+
 
 class MusicPlayer():
     def __init__(self, song):
@@ -9,27 +11,27 @@ class MusicPlayer():
 
     @staticmethod
     def click():
-        pygame.mixer.Sound("assets/audio/select_001.ogg").play()
+        pygame.mixer.Sound(resource_path("assets/audio/select_001.ogg")).play()
 
     @staticmethod
     def hover():
-        pygame.mixer.Sound("assets/audio/select_001.ogg").play()
+        pygame.mixer.Sound(resource_path("assets/audio/select_001.ogg")).play()
 
     @staticmethod
     def play_jump():
-        pygame.mixer.Sound("assets/audio/whoosh.mp3").play()
+        pygame.mixer.Sound(resource_path("assets/audio/whoosh.ogg")).play()
 
     @staticmethod
     def play_switch():
-        pygame.mixer.Sound("assets/audio/select_001.ogg").play()
+        pygame.mixer.Sound(resource_path("assets/audio/select_001.ogg")).play()
 
     @staticmethod
     def play_dash():
-        pygame.mixer.Sound("assets/audio/whoosh.mp3").play()
+        pygame.mixer.Sound(resource_path("assets/audio/whoosh.ogg")).play()
 
     @staticmethod
     def play_powerup():
-        pygame.mixer.Sound("assets/audio/confirmation_001.ogg").play()
+        pygame.mixer.Sound(resource_path("assets/audio/confirmation_001.ogg")).play()
     
     @staticmethod
     def stop():

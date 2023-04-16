@@ -2,6 +2,8 @@ import enum
 from constants import TILE_SIZE
 import pygame
 
+from utils import resource_path
+
 class WorldMap:
     def __init__(self, filename):
         self.tiles = []
@@ -15,7 +17,7 @@ class WorldMap:
         img_list = []
         self.num_tiles = 33
         for x in range(self.num_tiles+1):
-            img = pygame.image.load(f'assets/tiles/tile{x}.png')
+            img = pygame.image.load(resource_path(f'assets/tiles/tile{x}.png'))
             img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
             img_list.append(img)
         self.load_map(filename, img_list)

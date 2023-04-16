@@ -5,6 +5,8 @@ from constants import COLS, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_SIZE
 from player import Player
 from timer import Timer
 import pygame
+
+from utils import resource_path
 SCROLL_THRESH = 200
 
 class Renderer():
@@ -36,8 +38,8 @@ class Renderer():
         width = (SCREEN_HEIGHT/480) * 640
         x = -self.current_shift
         for image in images:
-            self.render_image(f"assets/background/set3_background.png", x, 0, width, SCREEN_HEIGHT)
-            self.render_image(f"assets/background/{image}.png", x, 0, width, SCREEN_HEIGHT)
+            self.render_image(resource_path(f"assets/background/set3_background.png"), x, 0, width, SCREEN_HEIGHT)
+            self.render_image(resource_path(f"assets/background/{image}.png"), x, 0, width, SCREEN_HEIGHT)
             x += width
 
     def render_world(self, world_map, player, help_manager):
@@ -77,7 +79,7 @@ class Renderer():
         else:
             image_name = standing[0]
 
-        image, _ = self.render_image(f"assets/player/Player Blue/playerBlue_{image_name}.png", player.x, player.y, player.width, player.height, flipped=(not player.isMovingRight))
+        image, _ = self.render_image(resource_path(f"assets/player/Player Blue/playerBlue_{image_name}.png"), player.x, player.y, player.width, player.height, flipped=(not player.isMovingRight))
 
     def render_timer(self, running_time: float, font):
         counting_string = Timer.time_to_str(running_time)
@@ -116,8 +118,8 @@ class Renderer():
 
     def render_main_menu(self):
         self.screen.fill((0,0,0))
-        self.render_image("assets/background/set3_background.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
-        self.render_image("assets/background/set3_hills.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
+        self.render_image(resource_path("assets/background/set3_background.png"), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
+        self.render_image(resource_path("assets/background/set3_hills.png"), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
 
         # Render logo at center of screen
         pygame.logo = pygame.image.load("assets/logo.png")
@@ -128,9 +130,9 @@ class Renderer():
         # Render start, settings, and quit buttons (size 190 by 49)
         button_width = 190
         button_height = 49
-        _, tutorial_button = self.render_image("assets/buttons/tutorial_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height, shift=False)
-        _, start_button = self.render_image("assets/buttons/start_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + button_height + 10, shift=False)
-        _, quit_button = self.render_image("assets/buttons/quit_button.png", SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + 2 * (button_height + 10), shift=False)
+        _, tutorial_button = self.render_image(resource_path("assets/buttons/tutorial_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height, shift=False)
+        _, start_button = self.render_image(resource_path("assets/buttons/start_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + button_height + 10, shift=False)
+        _, quit_button = self.render_image(resource_path("assets/buttons/quit_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + 2 * (button_height + 10), shift=False)
 
         return start_button, tutorial_button, quit_button
     
@@ -147,19 +149,19 @@ class Renderer():
         black = (0,0,0)
 
         # Render background
-        self.render_image("assets/background/set3_background.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
-        self.render_image("assets/background/set3_tiles.png", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
+        self.render_image(resource_path("assets/background/set3_background.png"), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
+        self.render_image(resource_path("assets/background/set3_tiles.png"), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, shift=False)
 
         # Render logo at center of screen
         multiplyer = 0.6
-        self.render_image("assets/logo.png", 50, 0, 550*multiplyer, 310*multiplyer, shift=False)
+        self.render_image(resource_path("assets/logo.png"), 50, 0, 550*multiplyer, 310*multiplyer, shift=False)
         self.render_text(Timer.time_to_str(level_time), 550*multiplyer + 50, 25, pygame.font.SysFont("Segoe UI Black", 100), (52, 201, 59))
 
         col1x = SCREEN_WIDTH/2 - 250
         col2x = SCREEN_WIDTH/2 + 100
 
-        true_button = "assets/buttons/blue_boxCheckmark.png"
-        false_button = "assets/buttons/blue_boxCross.png"
+        true_button = resource_path("assets/buttons/blue_boxCheckmark.png")
+        false_button = resource_path("assets/buttons/blue_boxCross.png")
         # Render level time
         self.render_text("Level Time:", col1x, SCREEN_HEIGHT/2 - 150, font, black)
         self.render_text(Timer.time_to_str(level_time), col2x, SCREEN_HEIGHT/2 - 150, font, black)
@@ -189,6 +191,6 @@ class Renderer():
         self.render_image(true_button if player.canDash else false_button, col2x, SCREEN_HEIGHT/2 + 150, 20, 20, shift=False)
 
         # Render continue button
-        _, continue_button = self.render_image("assets/buttons/continue_button.png", SCREEN_WIDTH/2 - 190/2, SCREEN_HEIGHT/2 + 200, shift=False)
+        _, continue_button = self.render_image(resource_path("assets/buttons/continue_button.png"), SCREEN_WIDTH/2 - 190/2, SCREEN_HEIGHT/2 + 200, shift=False)
 
         return continue_button

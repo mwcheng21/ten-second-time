@@ -1,9 +1,11 @@
+import asyncio
 from musicplayer import MusicPlayer
 from player import Player
 from powerups.powerup_manager import PowerUpManager
 import pygame
 from render import Renderer
-from timer import PygameTimer, Timer
+from timer import Timer
+from utils import resource_path
 from world_map import HelpSignManager, WorldMap
 from constants import GameState, tutorial_descriptions, level_descriptions
 
@@ -18,7 +20,7 @@ clock = pygame.time.Clock()
 level_timer = Timer()
 total_timer = Timer()
 renderer = Renderer(screen)
-world_map = WorldMap("level_data.csv")
+world_map = WorldMap(resource_path("level_data.csv"))
 player = Player(world_map)
 
 powerup_manager = PowerUpManager(screen, player, level_timer)
@@ -27,15 +29,15 @@ game_state = GameState.MAIN_MENU
 freezeTick = 50
 
 help_manager = HelpSignManager()
-main_menu_music_player = MusicPlayer("assets/audio/silver_seven_step.wav")
-level_music_player = MusicPlayer("assets/audio/bedtime.wav")
-pause_music_player = MusicPlayer("assets/audio/Olympus.wav")
-win_music_player = MusicPlayer("assets/audio/dawn.wav")
+main_menu_music_player = MusicPlayer(resource_path("assets/audio/silver_seven_step.ogg"))
+level_music_player = MusicPlayer(resource_path("assets/audio/bedtime.ogg"))
+pause_music_player = MusicPlayer(resource_path("assets/audio/Olympus.ogg"))
+win_music_player = MusicPlayer(resource_path("assets/audio/dawn.ogg"))
 musicPlayers = [main_menu_music_player, level_music_player, pause_music_player]
 
 def load_level(level):
 	global world_map, player, powerup_manager
-	world_map = WorldMap(level)
+	world_map = WorldMap(resource_path(level))
 	player = Player(world_map)
 	powerup_manager = PowerUpManager(screen, player, level_timer)
 
@@ -108,7 +110,7 @@ def game_loop():
 			elif event.key == pygame.K_r:
 				player.reset()
 			elif event.key == pygame.K_SPACE:
-				player.won = True
+				pass
 			
 	player.update()
 	if (player.won):
@@ -175,10 +177,6 @@ def pause_loop():
 def main_menu_loop():
 	global game_state
 
-	if not main_menu_music_player.is_playing():
-		main_menu_music_player.reset()
-		main_menu_music_player.play(-1)
-
 	start_button, tutorial_button, quit_button = renderer.render_main_menu()
 	#event loop
 
@@ -234,20 +232,32 @@ def win_loop():
 				main_menu_music_player.reset()
 				main_menu_music_player.play(-1)
 
-while running:
-	if (game_state == GameState.MAIN_MENU):
-		main_menu_loop()
-	elif (game_state == GameState.PAUSE):
-		pause_loop()
-	elif (game_state == GameState.SHOP):
-		shop_loop()
-	elif (game_state == GameState.GAME):
-		game_loop()
-	elif (game_state == GameState.WIN):
-		win_loop()
-	elif (game_state == GameState.SETTINGS):
-		settings_loop()
 
-	renderer.update()
-	pygame.display.update()
-	clock.tick(60)
+
+async def main():
+	global game_state, renderer, clock, running
+	game_start = True
+	while running:
+		if game_start:
+			main_menu_music_player.reset()
+			main_menu_music_player.play(-1)
+			game_start = False
+		if (game_state == GameState.MAIN_MENU):
+			main_menu_loop()
+		elif (game_state == GameState.PAUSE):
+			pause_loop()
+		elif (game_state == GameState.SHOP):
+			shop_loop()
+		elif (game_state == GameState.GAME):
+			game_loop()
+		elif (game_state == GameState.WIN):
+			win_loop()
+		elif (game_state == GameState.SETTINGS):
+			settings_loop()
+
+		renderer.update()
+		pygame.display.update()
+		clock.tick(60)
+		await asyncio.sleep(0)  # Very important, and keep it 0
+
+asyncio.run(main())

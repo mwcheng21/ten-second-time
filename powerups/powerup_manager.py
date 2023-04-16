@@ -26,7 +26,7 @@ class PowerUpManager():
 
     def add_level_powerups(self):
         self.add_powerup(JumpPowerup("assets/powerups/jump.png", 3))
-        self.add_powerup(IncreaseAcceleration("assets/powerups/accel.png", 5))
+        self.add_powerup(IncreaseAcceleration("assets/powerups/accel.png", 2))
         self.add_powerup(IncreaseMaxSpeed("assets/powerups/speed.png", 10))
         self.add_powerup(TimeSlow("assets/powerups/timeslow.png", 0.75))
         self.add_powerup(TimeStartsAt("assets/powerups/time.png", 5))
@@ -42,7 +42,7 @@ class PowerUpManager():
 
     def infinitely_generate_powerups(self):
         self.add_powerup(JumpPowerup("assets/powerups/jump.png", 3))
-        self.add_powerup(IncreaseAcceleration("assets/powerups/accel.png", 5))
+        self.add_powerup(IncreaseAcceleration("assets/powerups/accel.png", 2))
         self.add_powerup(IncreaseMaxSpeed("assets/powerups/speed.png", 10))
         self.add_powerup(TimeSlow("assets/powerups/timeslow.png", 0.75))
         self.add_powerup(TimeStartsAt("assets/powerups/time.png", 5))
