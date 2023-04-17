@@ -209,7 +209,7 @@ def main_menu_loop():
 			if start_button.collidepoint(pos):
 				load_game("level_data.csv")
 			elif tutorial_button.collidepoint(pos):
-				load_game("tutorial_level.csv")
+				load_game("tutorial_data.csv")
 			elif level_edit_button.collidepoint(pos):
 				start_level_editor()
 				game_state = GameState.LEVEL_EDITOR
