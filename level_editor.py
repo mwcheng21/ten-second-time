@@ -23,7 +23,7 @@ class Level():
             f.writelines(row * ROWS)
 
         with open(self.json, 'w') as f:
-            f.write(f'{{"playerx": 0, "playery": 0}}')
+            f.write(f'{{"playerx": 9, "playery": 12}}')
 
     def write_to_csv(self, x, y, tile_type):
         with open(self.csv, 'r') as f_in:
