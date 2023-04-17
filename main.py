@@ -1,4 +1,5 @@
 import asyncio
+from level_editor import LevelEditor, LevelSelector
 from musicplayer import MusicPlayer
 from player import Player
 from powerups.powerup_manager import PowerUpManager
@@ -21,7 +22,7 @@ level_timer = Timer()
 total_timer = Timer()
 renderer = Renderer(screen)
 world_map = WorldMap(resource_path("level_data.csv"))
-player = Player(world_map)
+player = Player(world_map, level_timer)
 
 powerup_manager = PowerUpManager(screen, player, level_timer)
 running = True
@@ -38,7 +39,7 @@ musicPlayers = [main_menu_music_player, level_music_player, pause_music_player]
 def load_level(level):
 	global world_map, player, powerup_manager
 	world_map = WorldMap(resource_path(level))
-	player = Player(world_map)
+	player = Player(world_map, level_timer)
 	powerup_manager = PowerUpManager(screen, player, level_timer)
 
 	if level == "tutorial_data.csv":
@@ -58,13 +59,22 @@ def level_start():
 	level_music_player.play(-1)
 
 def render_game():
-	global world_map
+	global world_map, game_state, player, level_timer, powerup_manager, freezeTick
 
 	# render background
 	renderer.render_background()
 
 	# render world
-	renderer.render_world(world_map, player, help_manager)
+	home_button = renderer.render_world(world_map, player, help_manager, game_state)
+	#if button is pressed, go to main menu
+	if (pygame.mouse.get_pressed()[0] and home_button.collidepoint(pygame.mouse.get_pos())):
+		game_state = GameState.MAIN_MENU
+		player.reset()
+		level_timer.reset()
+		total_timer.reset()
+		powerup_manager = PowerUpManager(screen, player, level_timer)
+		main_menu_music_player.reset()
+		main_menu_music_player.play(-1)
 
 	# render player
 	renderer.render_player(player)
@@ -177,11 +187,16 @@ def pause_loop():
 	#event loop
 	game_loop()
 
+def load_game(name):
+	global game_state
+	game_state = GameState.GAME
+	load_level(name)
+	level_start()
 
 def main_menu_loop():
-	global game_state
+	global game_state, selector
 
-	start_button, tutorial_button, quit_button = renderer.render_main_menu()
+	start_button, tutorial_button, level_edit_button, level_load_button, quit_button = renderer.render_main_menu()
 	#event loop
 
 	for event in pygame.event.get():
@@ -192,16 +207,69 @@ def main_menu_loop():
 			pos = pygame.mouse.get_pos()
 			MusicPlayer.click()
 			if start_button.collidepoint(pos):
-				game_state = GameState.GAME
-				load_level("level_data.csv")
-				level_start()
+				load_game("level_data.csv")
 			elif tutorial_button.collidepoint(pos):
-				game_state = GameState.GAME
-				load_level("tutorial_data.csv")
-				level_start()
+				load_game("tutorial_level.csv")
+			elif level_edit_button.collidepoint(pos):
+				start_level_editor()
+				game_state = GameState.LEVEL_EDITOR
+			elif level_load_button.collidepoint(pos):
+				selector.load_levels()
+				game_state = GameState.LEVEL_LOAD
 			elif quit_button.collidepoint(pos):
 				pygame.quit()
 				quit()
+
+def start_level_editor():
+	global game_state, editor, editorRenderer, editorPlayer
+	editorRenderer = Renderer(screen)
+	editorPlayer = Player(world_map, Timer())
+	editor = LevelEditor(editorPlayer)
+
+def level_editor_loop():
+	global game_state, editor, editorRenderer, editorPlayer
+	game_state = editor.handle_events(editorRenderer.current_shift)
+	editor_map = WorldMap(editor.level.csv)
+	# render background
+	editorRenderer.render_background()
+
+	# render world
+	editorRenderer.render_world(editor_map, editorPlayer, HelpSignManager(), game_state=game_state)
+
+	# render player
+	editorRenderer.render_player(editorPlayer)
+
+	editorPlayer.isHoldingJump = False
+
+	#render update
+	editorRenderer.render_update()
+	editor.render(screen)
+
+	if editor.isPlaying:
+		editorPlayer.world_map = editor_map
+		editorPlayer.update()
+
+selector = LevelSelector(screen)
+def level_load_loop():
+	global game_state, selector
+	renderer.render_background()
+	level_rects, delete_rects = selector.render()
+	for event in pygame.event.get():
+		if (event.type == pygame.MOUSEBUTTONUP and event.button == 1):
+			pos = pygame.mouse.get_pos()
+			for i in range(len(level_rects)):
+				if level_rects[i].collidepoint(pos):
+					x, y = selector.load_player_pos(i)
+					player.starting_x = x
+					player.starting_y = y
+					load_game("assets/levels/" + selector.level_names[i])
+			for i in range(len(delete_rects)):
+				if delete_rects[i].collidepoint(pos):
+					selector.delete_level(i)
+					selector.load_levels()
+
+			if selector.back_button_rect.collidepoint(pos):
+				game_state = GameState.MAIN_MENU
 
 def pause_loop():
 	global game_state
@@ -258,6 +326,10 @@ async def main():
 			win_loop()
 		elif (game_state == GameState.SETTINGS):
 			settings_loop()
+		elif (game_state == GameState.LEVEL_EDITOR):
+			level_editor_loop()
+		elif (game_state == GameState.LEVEL_LOAD):
+			level_load_loop()
 
 		renderer.update()
 		pygame.display.update()

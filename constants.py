@@ -7,6 +7,8 @@ class GameState(enum.Enum):
 	SHOP = 4
 	WIN = 5
 	SETTINGS = 6
+	LEVEL_EDITOR = 7
+	LEVEL_LOAD = 8
 
 
 SCREEN_WIDTH = 800

@@ -1,7 +1,7 @@
 
 
 
-from constants import COLS, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_SIZE
+from constants import COLS, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_SIZE, GameState
 from player import Player
 from timer import Timer
 import pygame
@@ -42,7 +42,7 @@ class Renderer():
             self.render_image(resource_path(f"assets/background/{image}.png"), x, 0, width, SCREEN_HEIGHT)
             x += width
 
-    def render_world(self, world_map, player, help_manager):
+    def render_world(self, world_map, player, help_manager, game_state):
         for tile in world_map.tiles:
             coords = tile[1]
             self.screen.blit(tile[0], (coords.x + self.current_shift, coords.y))
@@ -60,7 +60,10 @@ class Renderer():
                         self.render_text(line, SCREEN_WIDTH/2, 50 + i * 30, font, black, centered=True)
                     break
 
-        
+        # render pause button in top right
+        if (game_state == GameState.GAME):
+            _, home_button = self.render_image(resource_path("assets/tiles/home.png"), SCREEN_WIDTH - TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, shift=False)
+            return home_button
 
     def render_player(self, player: Player, cur_starting_x: int = 0):
         assert self.current_shift <= 0
@@ -123,18 +126,20 @@ class Renderer():
 
         # Render logo at center of screen
         pygame.logo = pygame.image.load("assets/logo.png")
-        logo_rect = pygame.logo.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 100))
+        logo_rect = pygame.logo.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 150))
         self.screen.blit(pygame.logo, logo_rect)
         
         
         # Render start, settings, and quit buttons (size 190 by 49)
         button_width = 190
         button_height = 49
-        _, tutorial_button = self.render_image(resource_path("assets/buttons/tutorial_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height, shift=False)
-        _, start_button = self.render_image(resource_path("assets/buttons/start_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + button_height + 10, shift=False)
-        _, quit_button = self.render_image(resource_path("assets/buttons/quit_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height + 2 * (button_height + 10), shift=False)
+        _, tutorial_button = self.render_image(resource_path("assets/buttons/tutorial_button.png"), SCREEN_WIDTH/2 - button_width/2, logo_rect.y + logo_rect.height - 20, shift=False)
+        _, start_button = self.render_image(resource_path("assets/buttons/start_button.png"), SCREEN_WIDTH/2 - button_width/2, -20 + logo_rect.y + logo_rect.height + (button_height + 10), shift=False)
+        _, level_editor_button = self.render_image(resource_path("assets/buttons/level_editor_button.png"), SCREEN_WIDTH/2 - button_width/2, -20 + logo_rect.y + logo_rect.height + 2 * (button_height + 10), shift=False)
+        _, level_load_button = self.render_image(resource_path("assets/buttons/level_load_button.png"), SCREEN_WIDTH/2 - button_width/2, -20 + logo_rect.y + logo_rect.height + 3 * (button_height + 10), shift=False)
+        _, quit_button = self.render_image(resource_path("assets/buttons/quit_button.png"), SCREEN_WIDTH/2 - button_width/2, -20 + logo_rect.y + logo_rect.height + 4 * (button_height + 10), shift=False)
 
-        return start_button, tutorial_button, quit_button
+        return start_button, tutorial_button, level_editor_button, level_load_button, quit_button
     
     def render_text(self, text, x, y, font, color, centered = False):
         text = font.render(text, 1, color)

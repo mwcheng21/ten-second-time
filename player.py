@@ -6,11 +6,14 @@ STARTING_X = 9
 STARTING_Y = 12
 
 class Player:
-    def __init__(self, world_map):
+    def __init__(self, world_map, level_timer, starting_x=STARTING_X, starting_y=STARTING_Y):
+        self.level_timer = level_timer
         self.completions = 0
         self.deaths = 0
-        self.x = STARTING_X * TILE_SIZE
-        self.y = STARTING_Y * TILE_SIZE
+        self.starting_x = starting_x
+        self.starting_y = starting_y
+        self.x = starting_x * TILE_SIZE
+        self.y = starting_y * TILE_SIZE
         self.width = 45*0.6#45*0.6
         self.height = 45*0.6#54*0.6
         self.help_index = -1
@@ -61,8 +64,8 @@ class Player:
 
     def reset(self):
         self.won = False
-        self.x = STARTING_X * TILE_SIZE
-        self.y = STARTING_Y * TILE_SIZE
+        self.x = self.starting_x * TILE_SIZE
+        self.y = self.starting_y * TILE_SIZE
         self.vertical_v = 0
         self.horizontal_v = 0
 
@@ -178,11 +181,15 @@ class Player:
             if self.y > ROWS * TILE_SIZE:
                 self.deaths += 1
                 self.reset()
+                self.level_timer.reset()
+                self.level_timer.start()
             for tile in self.world_map.death_list:
                 _, rect = tile
                 if rect.colliderect(self.x, self.y, self.width, self.height):
                     self.deaths += 1
                     self.reset()
+                    self.level_timer.reset()
+                    self.level_timer.start()
                     
         # Check if player colliding with help sign
         for i, tile in enumerate(self.world_map.help_list_tiles):
