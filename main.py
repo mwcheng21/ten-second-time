@@ -9,7 +9,7 @@ from timer import Timer
 from utils import resource_path
 from world_map import HelpSignManager, WorldMap
 from constants import GameState, tutorial_descriptions, level_descriptions
-
+import assets.levels.temp_filler
 pygame.init()
 
 screen = pygame.display.set_mode( (800,600) )
@@ -46,7 +46,7 @@ def load_level(level):
 		help_manager.descriptions = tutorial_descriptions
 		powerup_manager.add_tutorial_powerups()
 	else:
-		help_manager.descriptions = level_descriptions
+		help_manager.descriptions = level_descriptions if level == "level_data.csv" else [""] * 1000
 		powerup_manager.add_level_powerups()
 
 def level_start():
@@ -249,6 +249,8 @@ def level_editor_loop():
 		editorPlayer.world_map = editor_map
 		editorPlayer.update()
 
+
+
 selector = LevelSelector(screen)
 def level_load_loop():
 	global game_state, selector
@@ -260,9 +262,10 @@ def level_load_loop():
 			for i in range(len(level_rects)):
 				if level_rects[i].collidepoint(pos):
 					x, y = selector.load_player_pos(i)
+					load_game("assets/levels/" + selector.level_names[i])
 					player.starting_x = x
 					player.starting_y = y
-					load_game("assets/levels/" + selector.level_names[i])
+					player.reset()
 			for i in range(len(delete_rects)):
 				if delete_rects[i].collidepoint(pos):
 					selector.delete_level(i)

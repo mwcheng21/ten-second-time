@@ -47,7 +47,7 @@ class Renderer():
             coords = tile[1]
             self.screen.blit(tile[0], (coords.x + self.current_shift, coords.y))
 
-        if player.help_index != -1:
+        if player.help_index != -1 and game_state == GameState.GAME:
             # render help text in top right
             font = pygame.font.SysFont("Segoe UI Black", 22)
             black = (0, 0, 0)
